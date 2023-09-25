@@ -84,6 +84,7 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 		cancel()
 		if err != nil {
 			log.Printf("[kitex-registry] failed to Register(grant lease), retrying: %s\n", err)
+			time.Sleep(time.Second)
 			continue
 		}
 
@@ -93,6 +94,7 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 		cancel()
 		if err != nil {
 			log.Printf("[kitex-registry] failed to Registry(put key), retrying: %s\n", err)
+			time.Sleep(time.Second)
 			continue
 		}
 
@@ -120,8 +122,6 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 					continue
 				}
 				defer cancel()
-
-				time.Sleep(time.Second * 10)
 
 				for {
 					select {
