@@ -151,7 +151,7 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 				// 1s的冷却, 防止cpu占用骤增
 				time.Sleep(time.Second)
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-				lease, err := r.etcdClient.Grant(ctx, 15)
+				lease, err = r.etcdClient.Grant(ctx, 15)
 				cancel()
 				if err != nil {
 					log.Printf("[kitex-registry] failed to Register(goroutine grant lease), retrying: %s\n", err)
