@@ -99,20 +99,16 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 		// 保证第一次注册成功, 将内容写入etcd, 后面起一个goroutine持续保持lease
 		name := info.ServiceName
 		go func() {
+			leases := make(map[string]struct{})
+			leases[fmt.Sprint(lease.ID)] = struct{}{}
+
 			log.Println("[kitex-registry] succeed to register, now keeping lease")
 
 			// 退出时尝试把之前注册的key都销毁, 不能销毁也没关系, etcd会保底的
 			defer func() {
-				ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-				resp, err := r.etcdClient.Leases(ctx)
-				cancel()
-				if err != nil {
-					return
-				}
-
-				for _, v := range resp.Leases {
+				for k := range leases {
 					ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-					r.etcdClient.Delete(ctx, fmt.Sprintf("kitex-registry/%s/%d", name, v.ID))
+					r.etcdClient.Delete(ctx, fmt.Sprintf("kitex-registry/%s/%s", name, k))
 					cancel()
 				}
 			}()
@@ -161,6 +157,8 @@ func (r *etcdRegistry) Register(info *registry.Info) error {
 					log.Printf("[kitex-registry] failed to Register(goroutine grant lease), retrying: %s\n", err)
 					goto retry
 				}
+
+				leases[fmt.Sprint(lease)] = struct{}{}
 
 				ctx, cancel = context.WithTimeout(context.Background(), time.Second*3)
 				_, err = r.etcdClient.Put(ctx, fmt.Sprintf("kitex-registry/%s/%d", name, lease.ID),
