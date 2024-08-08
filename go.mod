@@ -8,7 +8,7 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 
 require (
 	github.com/cloudwego/kitex v0.7.1
-	go.etcd.io/etcd v3.3.27+incompatible
+	go.etcd.io/etcd v3.5.15
 )
 
 require (
