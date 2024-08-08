@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/registry"
-	"go.etcd.io/etcd/clientv3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 type etcdRegistry struct {
