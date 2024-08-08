@@ -1,4 +1,4 @@
-module github.com/markity/kitex-registry
+module github.com/snowykami/kitex-registry
 
 go 1.19
 
